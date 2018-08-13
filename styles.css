@@ -1,0 +1,19 @@
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue
+}
+
+.regular-size {
+  font-size: 20px;
+}
+
+.medium-font {
+  font-size: 30px
+}
+
+.big-font {
+  font-size: 40px;
+}

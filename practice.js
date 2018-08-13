@@ -322,21 +322,21 @@ console.log(myMultiply(15, 4));
 
 // Currying Higher Order Function factory
 
-const myCurried = cb => {
-  const cbLength = cb.length;
-  const resolver = (...args) => {
-    const resArgs = args;
-    return (...args) => {
-      let local = resArgs.slice();
-      let next;
+const myCurried = fn => {
+  const curriedFunc = (...args) => {
+    let currentArgs = args;
+    return (...otherArgs) => {
+      let innerArgs = currentArgs.concat(otherArgs);
 
-      local.push(...args);
-      next = local.length >= cbLength ? cb : resolver;
-      return next(...local);
+      if (innerArgs.length >= fn.length) {
+        return fn(...innerArgs);
+      } else {
+        return curriedFunc(...innerArgs);
+      }
     };
   };
 
-  return resolver();
+  return curriedFunc();
 };
 
 const addFunc = (a, b, c, d) => a + b + c + d;
@@ -359,3 +359,15 @@ console.log(curriedHello("John")); // Should be 'Hello John'
 console.log(curriedHola("John")); // Should be 'Hola John'
 console.log(curriedGreeting("Konichiwa", "Toshi")); // Should be Konichiwa Toshi
 console.log(curriedGreeting("Sup")("Homie"));
+
+const purchaseFunc = (item, count, price) => {
+  return `Bought ${count} ${item}s for ${price * count}`;
+};
+
+const curriedPurchase = myCurried(purchaseFunc);
+
+const curriedBuyCats = curriedPurchase("Cat");
+const curriedBuyDogs = curriedPurchase("Dog");
+
+console.log(curriedBuyCats(5)(100));
+console.log(curriedBuyDogs(20)(11));

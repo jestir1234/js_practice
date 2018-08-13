@@ -322,28 +322,28 @@ console.log(myMultiply(15, 4));
 
 // Currying Higher Order Function factory
 
-const myCurried = func => {
-  // greetingFn
-  const argLength = func.length;
+const myCurried = cb => {
+  const cbLength = cb.length;
+  const resolver = (...args) => {
+    const resArgs = args;
+    return (...args) => {
+      let local = resArgs.slice();
+      let next;
 
-  const curriedFunc = (...args) => {
-    // curriedGreeting Hello
-    if (args.length >= argLength) {
-      return func(...args);
-    }
-    const innerInnerFunc = (...moreArgs) => {
-      // curriedHello - Hola || John
-      if (args.concat(moreArgs).length >= argLength) {
-        return func(...args.concat(moreArgs));
-      } else {
-        return innerInnerFunc.apply(null, args.concat(moreArgs));
-      }
+      local.push(...args);
+      next = local.length >= cbLength ? cb : resolver;
+      return next(...local);
     };
-
-    return innerInnerFunc;
   };
-  return curriedFunc;
+
+  return resolver();
 };
+
+const addFunc = (a, b, c, d) => a + b + c + d;
+
+const curriedAdd = myCurried(addFunc);
+
+console.log(curriedAdd(1)(2)(3)(4));
 
 const greetingFn = (greeting, name) => {
   return `${greeting} ${name}`;
@@ -358,3 +358,4 @@ const curriedHola = curriedGreeting("Hola");
 console.log(curriedHello("John")); // Should be 'Hello John'
 console.log(curriedHola("John")); // Should be 'Hola John'
 console.log(curriedGreeting("Konichiwa", "Toshi")); // Should be Konichiwa Toshi
+console.log(curriedGreeting("Sup")("Homie"));
